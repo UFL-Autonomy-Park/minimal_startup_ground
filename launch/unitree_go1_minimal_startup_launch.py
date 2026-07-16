@@ -16,6 +16,10 @@ def generate_launch_description():
    with open(file_path, "r") as stream:
      try:
          data_loaded = yaml.safe_load(stream)
+         prefix = data_loaded['robot_namespace']
+         base_link = prefix + '/base_link'
+         odom_link = prefix + '/odom'
+         ap_id = prefix + 'autonomy_park/pose'
          robot_namespace = '/'+ data_loaded['robot_namespace']
          robot_name = data_loaded['robot_name']
 
@@ -37,7 +41,7 @@ def generate_launch_description():
    robot_localization_launch = IncludeLaunchDescription(
       PythonLaunchDescriptionSource([os.path.join(
          get_package_share_directory('minimal_startup')),
-         '/unitree_go1_navsat_localize.launch.py'])
+         '/claude_unitree_go1_navsat_localize.launch.py'])
      )
 
    static_transform_launch = IncludeLaunchDescription(
@@ -46,8 +50,15 @@ def generate_launch_description():
          '/go1_static_transform.launch.py'])
      )
 
+   avoidance_launch = IncludeLaunchDescription(
+      PythonLaunchDescriptionSource([os.path.join(
+         get_package_share_directory('avoidance'), 'launch'),
+         '/avoidance.launch.py'])
+     )
+
    return LaunchDescription([
       holonomic_interpreter,
+      #avoidance_launch,
       sensors_launch,
       robot_localization_launch,
       static_transform_launch,
@@ -57,7 +68,8 @@ def generate_launch_description():
         executable='unitree_velocity_interface_node',
         name='unitree_velocity_interface_node',
         output='screen',
-        parameters=[
+        parameters=[{"base_link_id": base_link},
+                    {"odom_frame_id": odom_link},
         ],
         remappings=[
         ]
@@ -71,6 +83,21 @@ def generate_launch_description():
         parameters=[
         ],
         remappings=[
+        ]
+      ),
+      launch_ros.actions.Node(
+        package='pose_broadcaster',
+        namespace=robot_namespace,
+        executable='pose_broadcaster_node',
+        name='pose_broadcaster',
+        output='screen',
+        parameters=[{"frame_id": base_link},
+                    {"origin_northing": 3278357},
+                    {"origin_easting": 368305},
+                    {"origin_rotation": -0.6021965548550632},
+        ],
+        remappings=[('odom/global', 'odometry/global'),
+                    ('pose', 'autonomy_park/pose'),
         ]
       ),
    ])

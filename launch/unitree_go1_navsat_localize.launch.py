@@ -13,13 +13,17 @@ def generate_launch_description():
     with open(file_path, "r") as stream:
         try:
             data_loaded = yaml.safe_load(stream)
+            frame_prefix = data_loaded['robot_namespace']
+            base_link_id = frame_prefix + '/base_link'
+            odom_frame_id = frame_prefix + '/odom'
+            navsat_link_id = frame_prefix + '/navsat_link'
             robot_namespace = '/'+ data_loaded['robot_namespace']
         except yaml.YAMLError as exc:
             print(exc)
 
     setup_path = LaunchConfiguration('setup_path')
 
-    arg_setup_path = DeclareLaunchArgument('setup_path', default_value='/home/administrator/platform_ws/src/common/minimal_startup/')
+    arg_setup_path = DeclareLaunchArgument('setup_path', default_value='/home/autonomypark/platform_ws/src/common/minimal_startup/')
 
     arg_output_final_position = DeclareLaunchArgument(
         'output_final_position',
@@ -46,46 +50,46 @@ def generate_launch_description():
             namespace=robot_namespace,
             executable='ekf_node',
             name='ekf_local',
-        output='screen',
+            output='screen',
             parameters=[{"frequency": 30.0},
-                        {"sensor_timeout": 1.0},
+                        {"sensor_timeout": 0.5},
                         {"two_d_mode": True},
-                        #{"transform_time_offset": 0.0},
-                        #{"transform_timeout": 0.0},
+                        {"transform_time_offset": 0.0},
+                        {"transform_timeout": 0.0},
                         {"print_diagnostics": True},
                         #{"debug": False},
-                        {"two_d_mode": True},
                         {"map_frame": 'autonomy_park'},
-                        {"odom_frame": 'odom'},
-                        {"base_link_frame": 'base_link'},
-                        {"world_frame": 'odom'},
+                        {"odom_frame": odom_frame_id},
+                        {"base_link_frame": base_link_id},
+                        {"world_frame": odom_frame_id},
                         {"publish_tf" : True},
-                        {"imu0": '/go1_0165/sensors/imu_0/data'},
+                        {"odom0": 'platform/odometry'},
+                        {"odom0_config": [False, False, False,
+                                          False, False, False,
+                                          True,  True,  False,
+                                          False, False, True,
+                                          False, False, False]},
+                        {"odom0_differential": False},
+                        {"odom0_relative": False},
+                        {"odom0_queue_size": 10},
+                        {"imu0": 'sensors/imu_0/data'},
                         {"imu0_config": [False, False, False,
                                          True,  True,  True,
                                          False, False, False,
                                          True,  True,  True,
-                                         True,  True,  True]},
+                                         False,  False,  False]},
                         {"imu0_differential": False},
                         {"imu0_relative": False},
                         {"imu0_queue_size": 10},
-                        {"imu0_remove_gravitational_acceleration": True},
-                        {"twist0": "/go1_0165/nonholo_cmd_vel_stamped"},  # Replace with your twist command topic (e.g., velocity commands)
-                        {"twist0_config": [False, False, False,  # x, y, z position (not used in twist messages)
-                                           False, False, False,    # r, p, y, orientation
-                                           True, True, True,    # x, y, z lin velocities
-                                           False, False, False,    #ang vel
-                                           False, False, False]}, #lin acc
-                        {"twist0_differential": False},  # True if your twist message is in differential form (e.g., wheel speeds)
-                        {"twist0_queue_size": 10},  # Size of the Twist message queue
+                        {"imu0_remove_gravitational_acceleration": False},
                         {"use_control": False},
-                        {"use_odometry": False},
-                        {"use_navsat": False},
-                       ],
+                        #{"process_noise_covariance": [1e-3, 1e-3, 1e-3, 0.3, 0.3, 0.01, 0.5, 0.5, 0.1, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]},
+                        #{"initial_estimate_covariance": [1e-9, 1e-9, 1e-9, 1.0, 1.0, 1e-9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]},
+                        ],
             remappings=[
-                        ('/tf', 'tf'),
-                        ('/tf_static', 'tf_static'),
-                        ('/diagnostics', 'diagnostics'),
+                        #('/tf', 'tf'),
+                        #('/tf_static', 'tf_static'),
+                        #('/diagnostics', 'diagnostics'),
                         #('imu', 'sensors/imu_0/data'),
                         #('odom', ''),
                         ('odometry/filtered', 'odometry/local'),
@@ -97,54 +101,54 @@ def generate_launch_description():
             executable='ekf_node',
             name='ekf_global',
             output='screen',
-            parameters=[#config_localization,
-                        {"frequency": 30.0},
-                        {"sensor_timeout": 0.1},
+            parameters=[{"frequency": 30.0},
+                        {"sensor_timeout": 0.5},
                         {"two_d_mode": True},
                         #{"transform_time_offset": 0.0},
                         #{"transform_timeout": 0.0},
                         {"print_diagnostics": True},
-                        # {"debug": False},
+                        {"debug": True},
                         {"map_frame": 'autonomy_park'},
-                        {"odom_frame": 'odom'},
-                        {"base_link_frame": 'base_link'},
+                        {"odom_frame": odom_frame_id},
+                        {"base_link_frame": base_link_id},
                         {"world_frame": 'autonomy_park'},
                         {"publish_tf" : True},
-                        {"twist0": "/go1_0165/nonholo_cmd_vel_stamped"},  # Replace with your twist command topic (e.g., velocity commands)
-                        {"twist0_config": [False, False, False,  # x, y, z position (not used in twist messages)
-                                           False, False, False,    # r, p, y orientation
-                                           True, True, True,    # x, y, z linear velocities
-                                           False, False, False,    # rd, pd, yd angular vel
-                                           False, False, False]},  # lin acc
-                        {"twist0_differential": False},  # True if your twist message is in differential form (e.g., wheel speeds)
-                        {"twist0_queue_size": 10},  # Size of the Twist message queue
-                        {"odom0": "odometry/gps"},
-                        {"odom0_config": [True, True, False,
+                        {"odom0": 'odometry/local'},
+                        {"odom0_config": [False, False, False,
                                           False, False, False,
-                                          False, False, False,
-                                          False, False, False,
+                                          True,  True,  False,
+                                          True, True, True,
                                           False, False, False]},
                         {"odom0_differential": False},
                         {"odom0_relative": False},
                         {"odom0_queue_size": 10},
+                        {"odom1": "odometry/gps"},
+                        {"odom1_config": [True, True, False,
+                                          False, False, False,
+                                          False, False, False,
+                                          False, False, False,
+                                          False, False, False]},
+                        {"odom1_differential": False},
+                        {"odom1_relative": False},
+                        {"odom1_queue_size": 10},
                         {"imu0": "sensors/imu_0/data"},
                         {"imu0_config": [False, False, False,
                                          True,  True,  True,
                                          False, False, False,
                                          True,  True,  True,
-                                         True,  True,  True]},
+                                         False,  False,  False]},
                         {"imu0_differential": False},
                         {"imu0_relative": False},
                         {"imu0_queue_size": 10},
-                        {"imu0_remove_gravitational_acceleration": True},
+                        {"imu0_remove_gravitational_acceleration": False},
                         {"use_control": False},
-                        #{"process_noise_covariance": [1e-3, 1e-3, 1e-3, 0.3, 0.3, 0.01, 0.5, 0.5, 0.1, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]},
-                        #{"initial_estimate_covariance": [1e-9, 1e-9, 1e-9, 1.0, 1.0, 1e-9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]},
+                        #{"process_noise_covariance": [1.0, 1.0, 1.0, 0.01, 0.1, 0.1, 0.1, 0.1, 0.1, 0.01, 0.01, 0.01, 0.1, 0.1, 0.1]},
+                        #{"initial_estimate_covariance": [1.0, 1.0, 1e-9, 1.0, 1.0, 1e-9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]},
                         ],
             remappings=[
-                        ('/tf', 'tf'),
-                        ('/tf_static', 'tf_static'),
-                        ('/diagnostics', 'diagnostics'),
+                        #('/tf', 'tf'),
+                        #('/tf_static', 'tf_static'),
+                        #('/diagnostics', 'diagnostics'),
                         #('imu', 'sensors/imu_0/data'),
                         #('odom', 'platform/odom'),
                         ('odometry/filtered', 'odometry/global'),
@@ -156,25 +160,25 @@ def generate_launch_description():
             executable='navsat_transform_node',
             name='navsat_transform',
             output='screen',
-            parameters=[#config_localization,
-                        {"frequency": 30.0},
-                        {"delay": 3.0},
-                        {"map_frame": "autonomy_park"},
-                        {"odom_frame": "odom"},
-                        {"world_frame": "autonomy_park"},
-                        {"base_link_frame": "base_link"},
+            parameters=[{"frequency": 30.0},
+                        {"delay": 1.0},
+                        #{"map_frame": "autonomy_park"},
+                        #{"odom_frame": odom_frame_id},
+                        #{"world_frame": "autonomy_park"},
+                        #{"base_link_frame": base_link_id},
+                        #{"gps_frame": navsat_link_id},
                         {"magnetic_declination_radians": 0.1117},  # For lat/long 29.628164, -82.360346
                         {"yaw_offset": 0.0},  # 1.570796327 IMU reads 0 facing magnetic north, not east
                         {"zero_altitude": False},
-                        {"broadcast_cartesian_transform": True},
+                        {"broadcast_cartesian_transform": False},
                         {"publish_filtered_gps": True},
-                        {"use_odometry_yaw": False},
+                        {"use_odometry_yaw": True},
                         {"wait_for_datum": True},
                         {"datum": [29.628164, -82.360346, -0.602196554855]}],
             remappings=[
-                        ('/tf', 'tf'),
-                        ('/tf_static', 'tf_static'),
-                        ('/diagnostics', 'diagnostics'),
+                        #('/tf', 'tf'),
+                        #('/tf_static', 'tf_static'),
+                        #('/diagnostics', 'diagnostics'),
                         ('imu', 'sensors/imu_0/data'),
                         ('gps/fix', 'sensors/gps/fix'),
                         ('gps/filtered', 'gps/filtered'),

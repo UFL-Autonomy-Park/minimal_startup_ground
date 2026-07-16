@@ -38,7 +38,7 @@ def generate_launch_description():
 
 
    return LaunchDescription([
-      #holonomic_interpreter,
+      holonomic_interpreter,
       avoidance_launch,
       sensors_launch,
       robot_localization_launch,
