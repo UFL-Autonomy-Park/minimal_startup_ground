@@ -23,7 +23,7 @@ def generate_launch_description():
 
     setup_path = LaunchConfiguration('setup_path')
 
-    arg_setup_path = DeclareLaunchArgument('setup_path', default_value='/home/autonomypark/platform_ws/src/common/minimal_startup/')
+    arg_setup_path = DeclareLaunchArgument('setup_path', default_value='/home/autonomypark/platform_ws/src/common/minimal_startup_ground/')
 
     arg_output_final_position = DeclareLaunchArgument(
         'output_final_position',

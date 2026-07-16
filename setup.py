@@ -3,29 +3,30 @@ from glob import glob
 
 from setuptools import setup
 
-package_name = 'minimal_startup'
+package_name = "minimal_startup_ground"
 
 setup(
     name=package_name,
-    version='0.0.0',
+    version="0.0.0",
     packages=[package_name],
     data_files=[
-        ('share/ament_index/resource_index/packages',
-            ['resource/' + package_name]),
-        ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name), glob('launch/*launch.[pxy][yma]*')),
-        (os.path.join('share', package_name), glob('launch/include/*launch.[pxy][yma]*')),
-        (os.path.join('share', package_name), glob('params/*.yaml')),
+        ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
+        ("share/" + package_name, ["package.xml"]),
+        (os.path.join("share", package_name), glob("launch/*launch.[pxy][yma]*")),
+        (
+            os.path.join("share", package_name),
+            glob("launch/include/*launch.[pxy][yma]*"),
+        ),
+        (os.path.join("share", package_name), glob("params/*.yaml")),
     ],
-    install_requires=['setuptools'],
+    install_requires=["setuptools"],
     zip_safe=True,
-    maintainer='patrick',
-    maintainer_email='patrick.amy@ufl.edu',
-    description='TODO: Package description',
-    license='TODO: License declaration',
-    tests_require=['pytest'],
+    maintainer="patrick",
+    maintainer_email="patrick.amy@ufl.edu",
+    description="TODO: Package description",
+    license="TODO: License declaration",
+    tests_require=["pytest"],
     entry_points={
-        'console_scripts': [
-        ],
+        "console_scripts": [],
     },
 )

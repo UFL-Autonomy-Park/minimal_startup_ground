@@ -25,54 +25,57 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
-
 from launch_ros.actions import SetRemap
 from launch_ros.substitutions import FindPackageShare
 
+from launch import LaunchDescription
+
 
 def generate_launch_description():
-    pkg_microstrain_inertial_driver = FindPackageShare('microstrain_inertial_driver')
+    pkg_microstrain_inertial_driver = FindPackageShare("microstrain_inertial_driver")
 
-    parameters = LaunchConfiguration('parameters')
-    namespace = LaunchConfiguration('namespace')
+    parameters = LaunchConfiguration("parameters")
+    namespace = LaunchConfiguration("namespace")
 
-    launch_microstrain_imu = PathJoinSubstitution([
-        pkg_microstrain_inertial_driver, 'launch', 'microstrain_launch.py'])
+    launch_microstrain_imu = PathJoinSubstitution(
+        [pkg_microstrain_inertial_driver, "launch", "microstrain_launch.py"]
+    )
 
-    arg_namespace = DeclareLaunchArgument(
-        'namespace',
-        default_value='')
+    arg_namespace = DeclareLaunchArgument("namespace", default_value="")
 
     arg_parameters = DeclareLaunchArgument(
-        'parameters',
-        default_value=PathJoinSubstitution([
-          FindPackageShare('minimal_startup'),
-          'params',
-          'microstrain_imu.yaml'
-        ]))
+        "parameters",
+        default_value=PathJoinSubstitution(
+            [
+                FindPackageShare("minimal_startup_ground"),
+                "params",
+                "microstrain_imu.yaml",
+            ]
+        ),
+    )
 
-    launch_microstrain_imu = GroupAction([
-        SetRemap('imu/data', 'data'),
-        SetRemap('/moving_ang', 'moving_ang'),
-        #SetRemap('/tf', 'tf'),
-        #SetRemap('/tf_static', 'tf_static'),
+    launch_microstrain_imu = GroupAction(
+        [
+            SetRemap("imu/data", "data"),
+            SetRemap("/moving_ang", "moving_ang"),
+            # SetRemap('/tf', 'tf'),
+            # SetRemap('/tf_static', 'tf_static'),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([launch_microstrain_imu]),
+                launch_arguments=[
+                    ("namespace", namespace),
+                    ("params_file", parameters),
+                    ("configure", "true"),
+                    ("activate", "true"),
+                ],
+            ),
+        ]
+    )
 
-        IncludeLaunchDescription(
-          PythonLaunchDescriptionSource([launch_microstrain_imu]),
-          launch_arguments=[
-            ('namespace', namespace),
-            ('params_file', parameters),
-            ('configure', 'true'),
-            ('activate', 'true')
-          ]
-        )
-    ])
-
-    #print('Loading parameter file: {0}'.format(parameters))
+    # print('Loading parameter file: {0}'.format(parameters))
 
     ld = LaunchDescription()
     ld.add_action(arg_namespace)
