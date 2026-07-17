@@ -91,7 +91,7 @@ microstrain_inertial_driver:
     raw_file_include_support_data: False
 
     # The directory to store the raw data file (no trailing '/')
-    raw_file_directory: "/home/your_name"
+    raw_file_directory: "/"
 
     # ******************************************************************
     # IMU Settings
