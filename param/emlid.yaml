@@ -2,3 +2,5 @@ emlid_interface:
   ros__parameters:
     baud_rate: 57600
     navsat_link_id: navsat_link
+    emlid_device_path: /dev/emlid
+    timer_callback_frequency: 50
