@@ -119,11 +119,6 @@ def generate_launch_description():
                 description="Launch Emlid GPS",
             ),
             DeclareLaunchArgument(
-                "launch_emlid",
-                default_value="true",
-                description="Launch Emlid GPS",
-            ),
-            DeclareLaunchArgument(
                 "launch_zed",
                 default_value="false",
                 description="Launch the ZED camera wrapper",

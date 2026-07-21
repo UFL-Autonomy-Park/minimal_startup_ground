@@ -1,0 +1,157 @@
+/**/ekf_local:
+  ros__parameters:
+    frequency: 30.0
+    sensor_timeout: 0.1
+    two_d_mode: true
+    transform_time_offset: 0.0
+    transform_timeout: 0.0
+    # print_diagnostics: true
+    #debug: false
+    publish_tf: true
+    odom0: platform/odom
+    odom0_config:
+      - false # x
+      - false # y
+      - false # z
+      - false # roll
+      - false # pitch
+      - false # yaw
+      - true # vx
+      - true # vy
+      - false # vz
+      - false # vroll
+      - false # vpitch
+      - false # vyaw, could be set true in future
+      - false # ax
+      - false # ay
+      - false # az
+    odom0_differential: false
+    odom0_relative: false
+    odom0_queue_size: 10
+    odom0_nodelay: false
+    imu0: sensors/imu/data
+    imu0_config:
+      - false # x
+      - false # y
+      - false # z
+      - false # roll
+      - false # pitch
+      - true # yaw
+      - false # vx
+      - false # vy
+      - false # vz
+      - false # vroll
+      - false # vpitch
+      - true # vyaw
+      - false # ax
+      - false # ay
+      - false # az
+    imu0_differential: false
+    imu0_relative: true
+    imu0_queue_size: 10
+    # imu0_pose_rejection_threshold: 0.8
+    # imu0_twist_rejection_threshold: 5.0
+    # imu0_linear_acceleration_rejection_threshold: 0.8
+    # imu0_remove_gravitational_acceleration: true
+    use_control: false
+    # control_config:
+    #   - true # vx
+    #   - true # vy
+    #   - false # vz
+    #   - false # vroll
+    #   - false # vpitch
+    #   - true # vyaw
+
+/**/ekf_global:
+  ros__parameters:
+    frequency: 30.0
+    sensor_timeout: 0.1
+    two_d_mode: true
+    transform_time_offset: 0.0
+    transform_timeout: 0.0
+    # print_diagnostics: true
+    # debug: false
+    publish_tf: true
+    reset_on_time_jump: true
+    odom0: platform/odom
+    odom0_config:
+      - false # x
+      - false # y
+      - false # z
+      - false # roll
+      - false # pitch
+      - false # yaw
+      - true # vx
+      - true # vy
+      - false # vz
+      - false # vroll
+      - false # vpitch
+      - false # vyaw, could be true in future
+      - false # ax
+      - false # ay
+      - false # az
+    odom0_differential: false
+    odom0_relative: false
+    odom0_nodelay: false
+    odom0_queue_size: 2
+    odom1: odometry/gps
+    odom1_config:
+      - true # x
+      - true # y
+      - false # z
+      - false # roll
+      - false # pitch
+      - false # yaw
+      - false # vx
+      - false # vy
+      - false # vz
+      - false # vroll
+      - false # vpitch
+      - false # vyaw
+      - false # ax
+      - false # ay
+      - false # az
+    odom1_differential: false
+    odom1_relative: false
+    odom1_queue_size: 2
+    imu0: sensors/imu/data
+    imu0_config:
+      - false # x
+      - false # y
+      - false # z
+      - false # roll
+      - false # pitch
+      - true # yaw
+      - false # vx
+      - false # vy
+      - false # vz
+      - false # vroll
+      - false # vpitch
+      - true # vyaw
+      - false # ax
+      - false # ay
+      - false # az
+    imu0_differential: false
+    imu0_relative: false
+    imu0_queue_size: 10
+    # imu0_pose_rejection_threshold: 0.8
+    # imu0_twist_rejection_threshold: 5.0
+    # imu0_linear_acceleration_rejection_threshold: 0.8
+    imu0_remove_gravitational_acceleration: false
+    use_control: false
+
+/**/navsat_transform:
+  ros__parameters:
+    frequency: 10.0
+    delay: 3.0
+    magnetic_declination_radians: 0.0 # 0.1117 (For lat/long 29.628164, -82.3603460
+    yaw_offset: 0.0 # 1.570796327 IMU reads 0 facing magnetic north, not east
+    zero_altitude: true
+    broadcast_cartesian_transform: false
+    publish_filtered_gps: true
+    use_odometry_yaw: false
+    wait_for_datum: true
+    datum:
+      - 29.628164
+      - -82.360346
+      - -0.602196554855

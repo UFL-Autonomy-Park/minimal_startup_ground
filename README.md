@@ -8,7 +8,7 @@ Launches necessary localization and control packages for the ground robots at th
 In charge of the Microstrain IMU, Emlid RS+ GPS unit, Zed 2i, and Velodyne VLP16 LiDAR 
 
 ### localization.launch.py
-
+Launches `robot_localization`
 
 ### platform.launch.py
 
