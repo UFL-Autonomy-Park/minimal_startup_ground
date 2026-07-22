@@ -47,6 +47,7 @@ def generate_launch_description():
             [sensors_launch_path],
         ),
         launch_arguments={
+            "robot_namespace": robot_namespace,
             "launch_microstrain": launch_microstrain,
             "launch_emlid": launch_emlid,
             "launch_zed": launch_zed,

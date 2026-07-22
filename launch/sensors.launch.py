@@ -1,19 +1,17 @@
 from ament_index_python.packages import get_package_share_directory
 from launch.actions import (
     DeclareLaunchArgument,
-    ExecuteProcess,
     GroupAction,
     IncludeLaunchDescription,
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import (
-    EnvironmentVariable,
-    FindExecutable,
     LaunchConfiguration,
     PathJoinSubstitution,
 )
-from launch_ros.actions import Node, SetRemap
+from launch_ros.actions import Node, PushRosNamespace, SetParameter, SetRemap
+from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
 import launch
@@ -40,20 +38,25 @@ def generate_launch_description():
             "microstrain_inertial_driver.yaml",
         ]
     )
+    imu_namespace = PathJoinSubstitution([robot_namespace, "sensors", "imu"])
 
+    imu_frame = ParameterValue(
+        [robot_namespace, "/imu_link"],
+        value_type=str,
+    )
     microstrain_imu = GroupAction(
         [
             SetRemap("imu/data", "data"),
             SetRemap("/moving_ang", "moving_ang"),
+            SetParameter(name="imu_frame_id", value=imu_frame),
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([microstrain_launch_path]),
                 launch_arguments={
-                    "namespace": f"{robot_namespace}/sensors/imu",
+                    "namespace": imu_namespace,
                     "params_file": microstrain_param,
                     "configure": "true",
                     "activate": "true",
                 }.items(),
-                parameters=[{"imu_frame_id": f"{robot_namespace}/imu_link"}],
             ),
         ],
         condition=IfCondition(launch_microstrain),
@@ -64,12 +67,16 @@ def generate_launch_description():
     emlid_param = PathJoinSubstitution(
         [FindPackageShare("minimal_startup_ground"), "param", "emlid_interface.yaml"]
     )
+    navsat_frame = ParameterValue(
+        [robot_namespace, "/navsat_link"],
+        value_type=str,
+    )
     emlid_gps = Node(
         package="emlid_interface",
         executable="emlid_interface_node",
         name="emlid_interface",
         namespace=robot_namespace,
-        parameters=[emlid_param, {"navsat_link_id": f"{robot_namespace}/navsat_link"}],
+        parameters=[emlid_param, {"navsat_link_id": navsat_frame}],
         remappings=[("rtk/fix", "sensors/gps/fix")],
         condition=IfCondition(launch_emlid),
     )
@@ -104,6 +111,7 @@ def generate_launch_description():
     )
     velodyne_lidar = GroupAction(
         [
+            PushRosNamespace(robot_namespace),
             SetRemap("velodyne_packets", "sensors/lidar/packets"),
             SetRemap("velodyne_points", "sensors/lidar/points"),
             SetRemap("scan", "sensors/lidar/scan"),
