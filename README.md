@@ -67,3 +67,5 @@ ros2 launch minimal_startup_ground robot.launch.py \
 	launch_velodyne:=true
 ```
 
+## TO-DO:
+- Add static transform for LiDAR
