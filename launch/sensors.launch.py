@@ -32,7 +32,11 @@ def generate_launch_description():
         ]
     )
     microstrain_param = PathJoinSubstitution(
-        [FindPackageShare("minimal_startup_ground"), "param", "microstrain.yaml"]
+        [
+            FindPackageShare("minimal_startup_ground"),
+            "param",
+            "microstrain_inertial_driver.yaml",
+        ]
     )
 
     microstrain_imu = GroupAction(
@@ -55,7 +59,7 @@ def generate_launch_description():
     # Emlid GPS
     launch_emlid = LaunchConfiguration("launch_emlid")
     emlid_param = PathJoinSubstitution(
-        [FindPackageShare("minimal_startup_ground"), "param", "emlid.yaml"]
+        [FindPackageShare("minimal_startup_ground"), "param", "emlid_interface.yaml"]
     )
     emlid_gps = Node(
         package="emlid_interface",
@@ -135,7 +139,7 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 "zed_namespace",
-                default_value="homebrew",
+                default_value="go1",
                 description="Optional ZED namespace",
             ),
             DeclareLaunchArgument(
