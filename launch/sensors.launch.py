@@ -22,6 +22,8 @@ from launch import LaunchDescription
 
 def generate_launch_description():
 
+    robot_namespace = LaunchConfiguration("robot_namespace")
+
     # Microstrain
     launch_microstrain = LaunchConfiguration("launch_microstrain")
     microstrain_launch_path = PathJoinSubstitution(
@@ -46,11 +48,12 @@ def generate_launch_description():
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([microstrain_launch_path]),
                 launch_arguments={
-                    "namespace": "sensors/imu",
+                    "namespace": f"{robot_namespace}/sensors/imu",
                     "params_file": microstrain_param,
                     "configure": "true",
                     "activate": "true",
                 }.items(),
+                parameters=[{"imu_frame_id": f"{robot_namespace}/imu_link"}],
             ),
         ],
         condition=IfCondition(launch_microstrain),
@@ -65,7 +68,8 @@ def generate_launch_description():
         package="emlid_interface",
         executable="emlid_interface_node",
         name="emlid_interface",
-        parameters=[emlid_param],
+        namespace=robot_namespace,
+        parameters=[emlid_param, {"navsat_link_id": f"{robot_namespace}/navsat_link"}],
         remappings=[("rtk/fix", "sensors/gps/fix")],
         condition=IfCondition(launch_emlid),
     )
@@ -112,6 +116,12 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
+            DeclareLaunchArgument(
+                "robot_namespace",
+                description=(
+                    "Namespace for the specific robot, without a leading slash"
+                ),
+            ),
             DeclareLaunchArgument(
                 "launch_microstrain",
                 default_value="true",

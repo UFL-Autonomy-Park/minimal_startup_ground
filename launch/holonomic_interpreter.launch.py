@@ -30,6 +30,7 @@ def generate_launch_description():
             Node(
                 package="holonomic_interpreter",
                 executable="holonomic_interpreter_node",
+                namespace=robot_namespace,
                 name="holonomic_interpreter",
                 parameters=[params_file],
                 remappings=[

@@ -3,7 +3,6 @@ microstrain_inertial_driver:
     port: "/dev/microstrain_main"
     aux_port: "/dev/ttyACM1"
     baudrate: 115200
-    imu_frame_id: "imu_link"
 
     use_enu_frame: true
     imu_data_rate: 100
