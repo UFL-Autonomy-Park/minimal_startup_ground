@@ -36,7 +36,7 @@ Publishes static transforms `base_link->navsat_link` and `base_link->imu_link`
 Launches [`robot_localization`](https://github.com/cra-ros-pkg/robot_localization)
 
 ### holonomic_interpreter.launch.py
-Launches ['holonomic_interpreter'](https://github.com/UFL-Autonomy-Park/holonomic_interpreter)
+Launches [`holonomic_interpreter`](https://github.com/UFL-Autonomy-Park/holonomic_interpreter)
 
 ## Launch Arguments
 | Argument | Description | Default |
