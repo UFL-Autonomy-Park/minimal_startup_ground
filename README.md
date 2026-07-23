@@ -67,5 +67,8 @@ ros2 launch minimal_startup_ground robot.launch.py \
 	launch_velodyne:=true
 ```
 
+## Notes
+The static transforms for each robotic platform are hard-coded into `transforms.launch.py`. Edit this file if you move sensors around, or if you are using this repo for a different robot. 
+
 ## TO-DO:
 - Add static transform for LiDAR
