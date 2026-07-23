@@ -41,6 +41,8 @@ def launch_platform(context):
             {
                 "base_link_id": base_link_frame,
                 "odom_frame_id": odom_frame,
+                "command_pub_frequency": 100,
+                "command_timeout": 0.25,
             }
         ],
         remappings=[
